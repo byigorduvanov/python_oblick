@@ -6,7 +6,7 @@ from app.templates import templates
 
 
 router = APIRouter()
-
+#роутер на адмінку
 @router.get("/", response_class=HTMLResponse)
 async def read_index(request: Request, current_user: Users = Depends(get_current_user)):
     if current_user.role == 'admin':

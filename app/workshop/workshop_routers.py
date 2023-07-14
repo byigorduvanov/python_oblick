@@ -11,7 +11,16 @@ from app.models.denzvit import Denzvit
 from pydantic import BaseModel
 
 router = APIRouter()
+#роутер на відкриття сторінки
+@router.get("/workshop_denzvit_form", response_class=HTMLResponse)
+async def read_index(request: Request, db: Session = Depends(get_db)):
+    robitnuks = db.query(Robitnuk).all()
+    operations = db.query(Operation).join(Oper).all()
+    odvumirs = db.query(Odvumir).all()
+    return templates.TemplateResponse("workshop/workshop_templates/workshop_denzvit_form.html",
+                                      {"request": request, "robitnuks": robitnuks, "operations": operations, "odvumirs": odvumirs})
 
+#роутер на створення деного звіту
 class DenzvitBase(BaseModel):
     id_robitnuk: List[int]
     id_operation: List[int]
@@ -33,10 +42,3 @@ async def create_denzvit(denzvit: DenzvitCreate, db: Session = Depends(get_db)):
     create_denzvit_in_db(denzvit, db)
     return {"status": "success"}
 
-@router.get("/workshop_denzvit_form", response_class=HTMLResponse)
-async def read_index(request: Request, db: Session = Depends(get_db)):
-    robitnuks = db.query(Robitnuk).all()
-    operations = db.query(Operation).join(Oper).all()
-    odvumirs = db.query(Odvumir).all()
-    return templates.TemplateResponse("workshop/workshop_templates/workshop_denzvit_form.html",
-                                      {"request": request, "robitnuks": robitnuks, "operations": operations, "odvumirs": odvumirs})
